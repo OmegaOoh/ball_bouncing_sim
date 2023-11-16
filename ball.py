@@ -1,35 +1,60 @@
 import turtle
 import random
 
-def draw_circle(color, size, x, y):
-    # draw a circle of radius equals to size at x, y coordinates and paint it with color
-    turtle.penup()
-    turtle.color(color)
-    turtle.fillcolor(color)
-    turtle.goto(x,y)
-    turtle.pendown()
-    turtle.begin_fill()
-    turtle.circle(size)
-    turtle.end_fill()
 
-def move_circle(i, xpos, ypos, vx, vy, canvas_width, canvas_height, ball_radius):
-    # update the x, y coordinates of ball i with velocity in the x (vx) and y (vy) components
-    xpos[i] += vx[i]
-    ypos[i] += vy[i]
+class Vector:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
-    # if the ball hits the side walls, reverse the vx velocity
-    if abs(xpos[i] + vx[i]) > (canvas_width - ball_radius):
-        vx[i] = -vx[i]
+    def __repr__(self):
+        return f'({self.x}, {self.y})'
 
-    # if the ball hits the ceiling or the floor, reverse the vy velocity
-    if abs(ypos[i] + vy[i]) > (canvas_height - ball_radius):
-        vy[i] = -vy[i]
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y)
 
-def initilizing(xpos, ypos, vx, vy, ball_color, canvas_width, canvas_height, ball_radius, num_balls):
-    # create random number of balls, num_balls, located at random positions within the canvas; each ball has a random velocity value in the x and y direction and is painted with a random color
-    for i in range(num_balls):
-        xpos.append(random.randint(-1*canvas_width + ball_radius, canvas_width - ball_radius))
-        ypos.append(random.randint(-1*canvas_height + ball_radius, canvas_height - ball_radius))
-        vx.append(random.randint(1, 0.01*canvas_width))
-        vy.append(random.randint(1, 0.01*canvas_height))
-        ball_color.append((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+
+class Canvas:
+    def __init__(self, canvas_size: Vector, ball_number, ball_radius):
+        self.canvas_size = canvas_size
+        self.ball_num = ball_number
+        self.ball_radius = ball_radius
+        self.balls = []
+        for i in range(self.ball_num):
+            ball_loc = Vector(random.randint(-1 * canvas_size.x + ball_radius, canvas_size.x - ball_radius),
+                              random.randint(-1 * canvas_size.y + ball_radius, canvas_size.y - ball_radius))
+            init_speed = Vector(random.randint(1, 0.01*canvas_size.x), (random.randint(1, 0.01*canvas_size.y)))
+            ball_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.balls.append(Ball(ball_color, ball_radius, ball_loc, ball_color))
+
+
+class Ball():
+    def __init__(self, color, size, location: Vector, speed: Vector,canvas: Canvas):
+        self.color = color
+        self.size = size
+        self.location = location
+        self.speed = speed
+        self.canvas_size = canvas.canvas_size
+
+    def draw(self):
+        # draw a circle of radius equals to size at x, y coordinates and paint it with color
+        turtle.penup()
+        turtle.color(self.color)
+        turtle.fillcolor(self.color)
+        turtle.goto(self.location.x, self.location.y)
+        turtle.pendown()
+        turtle.begin_fill()
+        turtle.circle(self.size)
+        turtle.end_fill()
+
+    def move(self):
+        # update ball location by speed
+        self.location += self.speed
+
+        # reverse x speed when hit side wall
+        if abs(self.location.x + self.speed.x) > (self.canvas_size.x - self.size):
+            self.speed.x = -self.speed.x
+
+        # reverse y speed when hit ceiling or floor
+        if abs(self.location.y + self.speed.y) > (self.canvas_size.x - self.size):
+            self.speed.y = -self.speed.y
