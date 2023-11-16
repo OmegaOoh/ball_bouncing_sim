@@ -16,6 +16,10 @@ class Vector:
 
 class Canvas:
     def __init__(self, canvas_size: Vector, ball_number, ball_radius):
+        turtle.speed(0)
+        turtle.tracer(0)
+        turtle.hideturtle()
+        turtle.colormode(255)
         self.canvas_size = canvas_size
         self.ball_num = ball_number
         self.ball_radius = ball_radius
@@ -26,6 +30,14 @@ class Canvas:
             init_speed = Vector(random.randint(1, 0.01*canvas_size.x), (random.randint(1, 0.01*canvas_size.y)))
             ball_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.balls.append(Ball(ball_color, ball_radius, ball_loc, init_speed, self))
+
+    def update(self):
+        turtle.clear()
+        for i in self.balls:
+            i.draw()
+            i.move()
+        turtle.update()
+
 
 
 class Ball():
