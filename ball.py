@@ -25,7 +25,7 @@ class Canvas:
                               random.randint(-1 * canvas_size.y + ball_radius, canvas_size.y - ball_radius))
             init_speed = Vector(random.randint(1, 0.01*canvas_size.x), (random.randint(1, 0.01*canvas_size.y)))
             ball_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-            self.balls.append(Ball(ball_color, ball_radius, ball_loc, ball_color))
+            self.balls.append(Ball(ball_color, ball_radius, ball_loc, init_speed, self))
 
 
 class Ball():
